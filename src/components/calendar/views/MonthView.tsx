@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCalendar } from '@/contexts/CalendarContext';
 import {
   startOfMonth,
@@ -13,9 +14,13 @@ import {
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { CalendarEvent } from '@/types/calendar';
+import { EventDialog } from '../EventDialog';
 
 export const MonthView = () => {
-  const { currentDate, events, calendars } = useCalendar();
+  const { currentDate, events, calendars, addEvent } = useCalendar();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [previewEvent, setPreviewEvent] = useState<{ date: Date; id: string } | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -27,11 +32,52 @@ export const MonthView = () => {
 
   const getEventsForDay = (day: Date): CalendarEvent[] => {
     const enabledCalendarIds = calendars.filter((c) => c.enabled).map((c) => c.id);
-    return events.filter(
+    const dayEvents = events.filter(
       (event) =>
         enabledCalendarIds.includes(event.calendarId) &&
         isSameDay(event.start, day)
     );
+
+    // Add preview event if exists for this day
+    if (previewEvent && isSameDay(previewEvent.date, day)) {
+      dayEvents.push({
+        id: previewEvent.id,
+        title: '(Sin título)',
+        start: day,
+        end: day,
+        color: 'blue',
+        calendarId: calendars[0]?.id || '1',
+        allDay: true,
+      });
+    }
+
+    return dayEvents;
+  };
+
+  const handleDayClick = (day: Date) => {
+    if (!isSameMonth(day, currentDate)) return;
+    
+    const dayEvents = events.filter(event => isSameDay(event.start, day));
+    if (dayEvents.length === 0) {
+      // Show preview event
+      const previewId = `preview-${Date.now()}`;
+      setPreviewEvent({ date: day, id: previewId });
+      setSelectedDate(day);
+      setDialogOpen(true);
+    }
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      setPreviewEvent(null);
+      setSelectedDate(null);
+    }
+  };
+
+  const handleSaveEvent = (event: Omit<CalendarEvent, 'id'>) => {
+    addEvent(event);
+    setPreviewEvent(null);
   };
 
   return (
@@ -59,8 +105,9 @@ export const MonthView = () => {
           return (
             <div
               key={day.toString()}
+              onClick={() => handleDayClick(day)}
               className={cn(
-                'border-r border-b last:border-r-0 p-2 min-h-[120px] overflow-hidden',
+                'border-r border-b last:border-r-0 p-2 min-h-[120px] overflow-hidden cursor-pointer hover:bg-accent/50 transition-colors',
                 !isCurrentMonth && 'bg-muted/30 text-muted-foreground',
                 isWeekend && isCurrentMonth && 'bg-calendar-weekend'
               )}
@@ -83,9 +130,15 @@ export const MonthView = () => {
                     className={cn(
                       'text-xs px-2 py-1 rounded truncate cursor-pointer',
                       `bg-calendar-event-${event.color}/20 text-calendar-event-${event.color}`,
-                      `border-l-4 border-calendar-event-${event.color}`
+                      `border-l-4 border-calendar-event-${event.color}`,
+                      previewEvent?.id === event.id && 'opacity-60'
                     )}
                     title={event.title}
+                    onClick={(e) => {
+                      if (previewEvent?.id !== event.id) {
+                        e.stopPropagation();
+                      }
+                    }}
                   >
                     {event.title}
                   </div>
@@ -95,6 +148,14 @@ export const MonthView = () => {
           );
         })}
       </div>
+
+      <EventDialog
+        open={dialogOpen}
+        onOpenChange={handleDialogClose}
+        selectedDate={selectedDate}
+        onSave={handleSaveEvent}
+        calendarId={calendars.find(c => c.enabled)?.id || '1'}
+      />
     </div>
   );
 };

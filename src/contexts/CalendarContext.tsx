@@ -10,6 +10,7 @@ interface CalendarContextType {
   events: CalendarEvent[];
   calendars: Calendar[];
   toggleCalendar: (id: string) => void;
+  addEvent: (event: Omit<CalendarEvent, 'id'>) => void;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(undefined);
@@ -88,12 +89,20 @@ export const CalendarProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [currentDate, setCurrentDate] = useState(new Date(2025, 9, 5)); // October 5, 2025
   const [view, setView] = useState<CalendarView>('month');
   const [calendars, setCalendars] = useState<Calendar[]>(sampleCalendars);
-  const [events] = useState<CalendarEvent[]>(sampleEvents);
+  const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
 
   const toggleCalendar = (id: string) => {
     setCalendars(prev =>
       prev.map(cal => (cal.id === id ? { ...cal, enabled: !cal.enabled } : cal))
     );
+  };
+
+  const addEvent = (event: Omit<CalendarEvent, 'id'>) => {
+    const newEvent: CalendarEvent = {
+      ...event,
+      id: `event-${Date.now()}-${Math.random()}`,
+    };
+    setEvents(prev => [...prev, newEvent]);
   };
 
   return (
@@ -106,6 +115,7 @@ export const CalendarProvider: React.FC<{ children: ReactNode }> = ({ children }
         events,
         calendars,
         toggleCalendar,
+        addEvent,
       }}
     >
       {children}
