@@ -57,6 +57,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        calendar: {
+          today: "hsl(var(--calendar-today))",
+          selected: "hsl(var(--calendar-selected))",
+          "event-blue": "hsl(var(--calendar-event-blue))",
+          "event-green": "hsl(var(--calendar-event-green))",
+          "event-red": "hsl(var(--calendar-event-red))",
+          "event-purple": "hsl(var(--calendar-event-purple))",
+          "event-orange": "hsl(var(--calendar-event-orange))",
+          grid: "hsl(var(--calendar-grid))",
+          weekend: "hsl(var(--calendar-weekend))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
