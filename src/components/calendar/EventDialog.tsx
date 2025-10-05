@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Clock, X } from 'lucide-react';
 import { CalendarEvent } from '@/types/calendar';
+import { EventDialogFull } from './EventDialogFull';
 
 interface EventDialogProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface EventDialogProps {
   selectedDate: Date | null;
   onSave: (event: Omit<CalendarEvent, 'id'>) => void;
   calendarId: string;
+  calendars: Array<{ id: string; name: string; color: string; enabled: boolean }>;
 }
 
 export const EventDialog = ({
@@ -24,12 +26,13 @@ export const EventDialog = ({
   selectedDate,
   onSave,
   calendarId,
+  calendars,
 }: EventDialogProps) => {
   const [title, setTitle] = useState('');
   const [allDay, setAllDay] = useState(true);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('10:00');
-  const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const [showFullDialog, setShowFullDialog] = useState(false);
 
   const handleSave = () => {
     if (!title.trim() || !selectedDate) return;
@@ -59,8 +62,12 @@ export const EventDialog = ({
     setAllDay(true);
     setStartTime('09:00');
     setEndTime('10:00');
-    setShowMoreOptions(false);
     onOpenChange(false);
+  };
+
+  const handleMoreOptions = () => {
+    onOpenChange(false);
+    setShowFullDialog(true);
   };
 
   const timeOptions = Array.from({ length: 48 }, (_, i) => {
@@ -70,18 +77,19 @@ export const EventDialog = ({
   });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 gap-0">
-        <DialogHeader className="p-4 pb-3 border-b">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 h-8 w-8"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[600px] p-0 gap-0">
+          <DialogHeader className="p-4 pb-3 border-b">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 top-4 h-8 w-8"
+              onClick={() => onOpenChange(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogHeader>
 
         <div className="p-6 space-y-4">
           <Input
@@ -139,20 +147,12 @@ export const EventDialog = ({
               Todo el día
             </Label>
           </div>
-
-          {showMoreOptions && (
-            <div className="space-y-3 pt-2">
-              <div className="text-sm text-muted-foreground">
-                Más opciones disponibles próximamente...
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="flex items-center justify-end gap-2 p-4 border-t">
           <Button
             variant="ghost"
-            onClick={() => setShowMoreOptions(!showMoreOptions)}
+            onClick={handleMoreOptions}
           >
             Más opciones
           </Button>
@@ -160,7 +160,17 @@ export const EventDialog = ({
             Guardar
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <EventDialogFull
+        open={showFullDialog}
+        onOpenChange={setShowFullDialog}
+        selectedDate={selectedDate}
+        onSave={onSave}
+        calendarId={calendarId}
+        calendars={calendars}
+      />
+    </>
   );
 };

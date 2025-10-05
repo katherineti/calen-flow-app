@@ -155,6 +155,7 @@ export const MonthView = () => {
         selectedDate={selectedDate}
         onSave={handleSaveEvent}
         calendarId={calendars.find(c => c.enabled)?.id || '1'}
+        calendars={calendars}
       />
     </div>
   );
