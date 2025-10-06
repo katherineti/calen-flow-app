@@ -83,19 +83,20 @@ export const MonthView = () => {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Week days header */}
-      <div className="grid grid-cols-7 border-b">
-        {weekDays.map((day) => (
+      <div className="grid grid-cols-7 border-b sticky top-0 bg-background z-10">
+        {weekDays.map((day, index) => (
           <div
             key={day}
-            className="text-center text-xs font-medium text-muted-foreground py-2 border-r last:border-r-0"
+            className="text-center text-[10px] sm:text-xs font-medium text-muted-foreground py-2 sm:py-3 border-r last:border-r-0"
           >
-            {day}
+            <span className="hidden sm:inline">{day}</span>
+            <span className="sm:hidden">{['D', 'L', 'M', 'X', 'J', 'V', 'S'][index]}</span>
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="flex-1 grid grid-cols-7 auto-rows-fr">
+      <div className="flex-1 grid grid-cols-7 auto-rows-fr overflow-auto">
         {days.map((day, index) => {
           const isCurrentMonth = isSameMonth(day, currentDate);
           const isTodayDate = isToday(day);
@@ -107,15 +108,15 @@ export const MonthView = () => {
               key={day.toString()}
               onClick={() => handleDayClick(day)}
               className={cn(
-                'border-r border-b last:border-r-0 p-2 min-h-[120px] overflow-hidden cursor-pointer hover:bg-accent/50 transition-colors',
+                'border-r border-b last:border-r-0 p-1 sm:p-2 min-h-[60px] sm:min-h-[100px] md:min-h-[120px] overflow-hidden cursor-pointer hover:bg-accent/50 transition-colors touch-manipulation active:bg-accent',
                 !isCurrentMonth && 'bg-muted/30 text-muted-foreground',
                 isWeekend && isCurrentMonth && 'bg-calendar-weekend'
               )}
             >
-              <div className="flex items-center justify-center mb-1">
+              <div className="flex items-center justify-center mb-0.5 sm:mb-1">
                 <span
                   className={cn(
-                    'text-sm font-normal w-7 h-7 flex items-center justify-center rounded-full',
+                    'text-xs sm:text-sm font-normal w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-full',
                     isTodayDate && 'bg-calendar-today text-white font-medium'
                   )}
                 >
@@ -123,14 +124,14 @@ export const MonthView = () => {
                 </span>
               </div>
 
-              <div className="space-y-1">
-                {dayEvents.map((event) => (
+              <div className="space-y-0.5 sm:space-y-1">
+                {dayEvents.slice(0, 3).map((event) => (
                   <div
                     key={event.id}
                     className={cn(
-                      'text-xs px-2 py-1 rounded truncate cursor-pointer',
+                      'text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded truncate cursor-pointer touch-manipulation active:opacity-80',
                       `bg-calendar-event-${event.color}/20 text-calendar-event-${event.color}`,
-                      `border-l-4 border-calendar-event-${event.color}`,
+                      `border-l-2 sm:border-l-4 border-calendar-event-${event.color}`,
                       previewEvent?.id === event.id && 'opacity-60'
                     )}
                     title={event.title}
@@ -143,6 +144,11 @@ export const MonthView = () => {
                     {event.title}
                   </div>
                 ))}
+                {dayEvents.length > 3 && (
+                  <div className="text-[10px] sm:text-xs text-muted-foreground px-1 sm:px-2">
+                    +{dayEvents.length - 3} más
+                  </div>
+                )}
               </div>
             </div>
           );

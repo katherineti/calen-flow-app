@@ -152,21 +152,21 @@ export const EventDialogFull = ({
               placeholder="Agregar título"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="text-2xl border-0 border-b rounded-none px-0 focus-visible:ring-0 mb-6"
+              className="text-lg sm:text-xl md:text-2xl border-0 border-b rounded-none px-0 focus-visible:ring-0 mb-4 sm:mb-6 touch-manipulation"
             />
 
             {/* Date and Time */}
-            <div className="flex items-start gap-4 mb-4">
-              <Clock className="h-5 w-5 text-muted-foreground mt-2" />
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-4">
+              <Clock className="h-5 w-5 text-muted-foreground mt-2 shrink-0" />
+              <div className="flex-1 w-full space-y-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-[140px] justify-start">
+                      <Button variant="outline" className="w-full sm:w-[140px] justify-start touch-manipulation">
                         {startDate ? format(startDate, 'd MMM yyyy', { locale: es }) : 'Fecha'}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0 bg-background z-50" align="start">
                       <Calendar
                         mode="single"
                         selected={startDate}
@@ -178,42 +178,42 @@ export const EventDialogFull = ({
                   </Popover>
 
                   {!allDay && (
-                    <>
+                    <div className="flex items-center gap-2 flex-1">
                       <Select value={startTime} onValueChange={setStartTime}>
-                        <SelectTrigger className="w-[100px]">
+                        <SelectTrigger className="w-full sm:w-[100px] touch-manipulation">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background z-50">
                           {timeOptions.map((time) => (
-                            <SelectItem key={time} value={time}>
+                            <SelectItem key={time} value={time} className="touch-manipulation">
                               {time}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <span>a</span>
+                      <span className="text-sm">a</span>
                       <Select value={endTime} onValueChange={setEndTime}>
-                        <SelectTrigger className="w-[100px]">
+                        <SelectTrigger className="w-full sm:w-[100px] touch-manipulation">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background z-50">
                           {timeOptions.map((time) => (
-                            <SelectItem key={time} value={time}>
+                            <SelectItem key={time} value={time} className="touch-manipulation">
                               {time}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                    </>
+                    </div>
                   )}
 
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-[140px] justify-start">
+                      <Button variant="outline" className="w-full sm:w-[140px] justify-start touch-manipulation">
                         {endDate ? format(endDate, 'd MMM yyyy', { locale: es }) : 'Fecha'}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0 bg-background z-50" align="start">
                       <Calendar
                         mode="single"
                         selected={endDate}
@@ -224,17 +224,18 @@ export const EventDialogFull = ({
                     </PopoverContent>
                   </Popover>
 
-                  <Button variant="link" size="sm">
+                  <Button variant="link" size="sm" className="hidden sm:inline-flex touch-manipulation">
                     Zona horaria
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="all-day-full"
                       checked={allDay}
                       onCheckedChange={(checked) => setAllDay(checked as boolean)}
+                      className="h-5 w-5 touch-manipulation"
                     />
                     <Label htmlFor="all-day-full" className="text-sm cursor-pointer">
                       Todo el día
@@ -242,12 +243,12 @@ export const EventDialogFull = ({
                   </div>
 
                   <Select value={recurrence} onValueChange={setRecurrence}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px] touch-manipulation">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="no-repeat">No se repite</SelectItem>
-                      <SelectItem value="daily">Todos los días</SelectItem>
+                    <SelectContent className="bg-background z-50">
+                      <SelectItem value="no-repeat" className="touch-manipulation">No se repite</SelectItem>
+                      <SelectItem value="daily" className="touch-manipulation">Todos los días</SelectItem>
                       <SelectItem value="weekly">Cada semana, el domingo</SelectItem>
                       <SelectItem value="monthly">Todos los meses, el primer domingo</SelectItem>
                       <SelectItem value="yearly">Anualmente, el 5 de octubre</SelectItem>
@@ -260,79 +261,86 @@ export const EventDialogFull = ({
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-              <TabsList>
-                <TabsTrigger value="details">Detalles del evento</TabsTrigger>
-                <TabsTrigger value="schedule">Ver horarios disponibles</TabsTrigger>
-                <TabsTrigger value="guests">Invitados</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4 sm:mb-6">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="details" className="text-xs sm:text-sm touch-manipulation">
+                  <span className="hidden sm:inline">Detalles del evento</span>
+                  <span className="sm:hidden">Detalles</span>
+                </TabsTrigger>
+                <TabsTrigger value="schedule" className="text-xs sm:text-sm touch-manipulation">
+                  <span className="hidden sm:inline">Ver horarios disponibles</span>
+                  <span className="sm:hidden">Horarios</span>
+                </TabsTrigger>
+                <TabsTrigger value="guests" className="text-xs sm:text-sm touch-manipulation">Invitados</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="details" className="space-y-4 mt-4">
+              <TabsContent value="details" className="space-y-3 sm:space-y-4 mt-4">
                 {/* Google Meet */}
-                <div className="flex items-center gap-4">
-                  <Video className="h-5 w-5 text-muted-foreground" />
-                  <Button variant="ghost" className="justify-start px-0">
-                    Agregar una videoconferencia de Google Meet
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <Video className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <Button variant="ghost" className="justify-start px-0 text-xs sm:text-sm h-auto py-2 touch-manipulation">
+                    <span className="hidden sm:inline">Agregar una videoconferencia de Google Meet</span>
+                    <span className="sm:hidden">Agregar Google Meet</span>
                   </Button>
                 </div>
 
                 {/* Location */}
-                <div className="flex items-center gap-4">
-                  <MapPin className="h-5 w-5 text-muted-foreground" />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
                   <Input
                     placeholder="Agregar ubicación"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 touch-manipulation"
                   />
                 </div>
 
                 {/* Notification */}
-                <div className="flex items-center gap-4">
-                  <Bell className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                  <Bell className="h-5 w-5 text-muted-foreground shrink-0 mt-2 sm:mt-0" />
+                  <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
                     <Select value={notification} onValueChange={setNotification}>
-                      <SelectTrigger className="w-[100px]">
+                      <SelectTrigger className="w-24 sm:w-[100px] touch-manipulation">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5</SelectItem>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="15">15</SelectItem>
-                        <SelectItem value="30">30</SelectItem>
+                      <SelectContent className="bg-background z-50">
+                        <SelectItem value="5" className="touch-manipulation">5</SelectItem>
+                        <SelectItem value="10" className="touch-manipulation">10</SelectItem>
+                        <SelectItem value="15" className="touch-manipulation">15</SelectItem>
+                        <SelectItem value="30" className="touch-manipulation">30</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={notificationUnit} onValueChange={setNotificationUnit}>
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger className="w-28 sm:w-[120px] touch-manipulation">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="minutos">minutos</SelectItem>
-                        <SelectItem value="horas">horas</SelectItem>
-                        <SelectItem value="días">días</SelectItem>
+                      <SelectContent className="bg-background z-50">
+                        <SelectItem value="minutos" className="touch-manipulation">minutos</SelectItem>
+                        <SelectItem value="horas" className="touch-manipulation">horas</SelectItem>
+                        <SelectItem value="días" className="touch-manipulation">días</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 touch-manipulation">
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
 
-                <Button variant="link" className="px-0">
+                <Button variant="link" className="px-0 text-xs sm:text-sm touch-manipulation">
                   Agregar notificación
                 </Button>
 
                 {/* Calendar Selection */}
-                <div className="flex items-center gap-4">
-                  <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                  <CalendarIcon className="h-5 w-5 text-muted-foreground shrink-0 mt-2 sm:mt-0" />
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
                     <Select value={selectedCalendar} onValueChange={setSelectedCalendar}>
-                      <SelectTrigger className="w-[250px]">
+                      <SelectTrigger className="w-full sm:w-[250px] touch-manipulation">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-background z-50">
                         {calendars.map((cal) => (
-                          <SelectItem key={cal.id} value={cal.id}>
+                          <SelectItem key={cal.id} value={cal.id} className="touch-manipulation">
                             <div className="flex items-center gap-2">
                               <div className={`w-3 h-3 rounded-full bg-calendar-event-${cal.color}`} />
                               {cal.name}
@@ -344,7 +352,7 @@ export const EventDialogFull = ({
 
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="w-full sm:w-auto touch-manipulation">
                           + Agregar una etiqueta
                         </Button>
                       </PopoverTrigger>

@@ -25,12 +25,12 @@ export const DayView = () => {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="flex border-b">
-          <div className="w-20 text-xs text-right pr-2 py-2 text-muted-foreground">GMT-04</div>
-          <div className="flex-1 text-center border-l py-2">
-            <div className="text-xs text-muted-foreground uppercase">
+          <div className="w-16 sm:w-20 text-[10px] sm:text-xs text-right pr-1 sm:pr-2 py-2 text-muted-foreground">GMT-04</div>
+          <div className="flex-1 text-center border-l py-2 sm:py-3">
+            <div className="text-xs sm:text-sm text-muted-foreground uppercase">
               {format(currentDate, 'EEEE', { locale: es })}
             </div>
-            <div className="text-4xl font-normal">
+            <div className="text-2xl sm:text-4xl font-normal">
               {format(currentDate, 'd')}
             </div>
           </div>
@@ -43,22 +43,22 @@ export const DayView = () => {
           const hourEvents = getEventsForHour(hour);
           return (
             <div key={hour} className="flex border-b" style={{ minHeight: '60px' }}>
-              <div className="w-20 text-xs text-right pr-2 pt-1 text-muted-foreground">
+              <div className="w-16 sm:w-20 text-[10px] sm:text-xs text-right pr-1 sm:pr-2 pt-1 text-muted-foreground">
                 {format(new Date().setHours(hour, 0), 'h a', { locale: es }).toUpperCase()}
               </div>
-              <div className="flex-1 border-l relative p-2">
+              <div className="flex-1 border-l relative p-1 sm:p-2">
                 {hourEvents.map((event) => (
                   <div
                     key={event.id}
                     className={cn(
-                      'text-sm px-3 py-2 rounded mb-2 cursor-pointer',
+                      'text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 rounded mb-2 cursor-pointer touch-manipulation active:opacity-80',
                       `bg-calendar-event-${event.color}/80 text-white`,
-                      `border-l-4 border-calendar-event-${event.color}`
+                      `border-l-2 sm:border-l-4 border-calendar-event-${event.color}`
                     )}
                     title={event.title}
                   >
                     <div className="font-medium">{event.title}</div>
-                    <div className="text-xs opacity-90">
+                    <div className="text-[10px] sm:text-xs opacity-90">
                       {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
                     </div>
                   </div>
